@@ -1,4 +1,11 @@
-# Corona Virus Tracker -- up to date statistics that keep up with rapidly changing data
+# Corona Virus Tracker
+
+ <img src="https://i.imgur.com/mqdliKA.png" height="350"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+ ###   -- up to date statistics that keep up with rapidly changing data
+
+
 
 Androidx, 15 to Android10, latest best practices @ google
 
