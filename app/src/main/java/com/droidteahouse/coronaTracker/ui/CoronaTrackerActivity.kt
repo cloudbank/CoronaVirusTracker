@@ -34,6 +34,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.droidteahouse.GlideApp
 import com.droidteahouse.GlideRequests
+
 import com.droidteahouse.coronaTracker.R
 import com.droidteahouse.coronaTracker.ServiceLocator
 import com.droidteahouse.coronaTracker.repository.NetworkState
@@ -44,8 +45,7 @@ import kotlinx.android.synthetic.main.activity_coronatracker.*
 
 /**
  * A list activity that shows areas affected by corona virus
- * <p>
- * The intent arguments can be modified to make it use a different repository (see MainActivity).
+ *
  */
 class CoronaTrackerActivity : AppCompatActivity() {
 

@@ -29,7 +29,7 @@ import com.droidteahouse.coronaTracker.repository.NetworkState
 import com.droidteahouse.coronaTracker.vo.Area
 
 /**
- * A simple adapter implementation that shows Reddit posts.
+ * A simple adapter implementation for the corona virus data
  */
 class AreaAdapter(
         private val glide: GlideRequests,

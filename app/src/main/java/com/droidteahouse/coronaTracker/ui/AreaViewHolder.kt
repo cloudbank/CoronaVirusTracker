@@ -33,7 +33,7 @@ import com.droidteahouse.coronaTracker.vo.Area
  */
 class AreaViewHolder(view: View, private val glide: GlideRequests
 ) : RecyclerView.ViewHolder(view) {
-    //@todd new extensions fix this
+
     private val name: TextView = view.findViewById(R.id.name)
     private val total: TextView = view.findViewById(R.id.total)
     private val recovered: TextView = view.findViewById(R.id.recovered)
@@ -44,6 +44,7 @@ class AreaViewHolder(view: View, private val glide: GlideRequests
 
     init {
         view.setOnClickListener {
+            // @todo
             /*  area?.let { area ->
                   val intent = Intent(ctx, MapsActivity::class.java)
                   intent.putExtra("latitude", area.latitude)

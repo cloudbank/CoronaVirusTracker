@@ -92,7 +92,7 @@ open class DefaultServiceLocator(val app: Application, val useInMemoryDb: Boolea
     }
 
     override fun getNetworkExecutor(): Executor = NETWORK_IO
-    //@todo might want ot swtich the IO
+
     override fun getDiskIOExecutor(): Executor = DISK_IO
 
     override fun getCoronaTrackerApi(): CoronaTrackerApi = api

@@ -25,9 +25,6 @@ class CoronaTrackerViewModel(
         private val repository: CoronaTrackerRepository
 
 ) : ViewModel() {
-//use switchMap when we have multiple livedata via search
-
-
     val worldLiveData: LiveData<ApiResponse> =
             repository.worldData()
 

@@ -57,8 +57,6 @@ interface CoronaTrackerApi {
                     .build()
 
             var gson: Gson? = GsonBuilder().serializeNulls().create()
-            //.registerTypeAdapter(Area::class.java, MyDeserializer<Area>())
-            //.create()
             return Retrofit.Builder()
                     .baseUrl(httpUrl)
                     .client(client)
@@ -69,13 +67,5 @@ interface CoronaTrackerApi {
         }
     }
 
-    class MyDeserializer<T> : JsonDeserializer<T> {
-        @Throws(JsonParseException::class)
-        override fun deserialize(je: JsonElement, type: Type?, jdc: JsonDeserializationContext?): T { // Get the "content" element from the parsed JSON
-            val content = je.asJsonObject
-            val areas = content.getAsJsonArray("areas")
 
-            return Gson().fromJson(areas, type)
-        }
-    }
 }

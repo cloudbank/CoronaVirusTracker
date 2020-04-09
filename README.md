@@ -1,20 +1,19 @@
 # Corona Virus Tracker
 
  <img src="https://i.imgur.com/mqdliKA.png" height="350"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+ <img src="https://i.imgur.com/gosm6Sg.png" height="350"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="https://i.imgur.com/XEMTnYu.png" height="350"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
+ ###   -- up to date statistics that keep up with rapidly changing covid-19 data
 
- ###   -- up to date statistics that keep up with rapidly changing data
+Androidx, ICS(15) to Android10, latest best practices @ google
 
-
-
-Androidx, 15 to Android10, latest best practices @ google
-
-MVVM pattern with Paging, LiveData and Room, and Repository pattern are used to page in scraped
+`MVVM` pattern with `Paging`, `LiveData` and `Room`, and `Repository` pattern are used to page in scraped
 data for the UI and also back-fill from the network as the user reaches the end of the list or
-LiveData detects a change.  Covid data is as up to data as possible, but may change suddenly.
-Swipe to refresh is available on the toolbar to get the very latest data.
+LiveData detects a change.  Covid data is as up to date as possible, but may change suddenly.
+Swipe to refresh is available on the toolbar to get the very latest.
 
-`Room` to uses the  `DataSource.Factory` as a positional data source and the Paging Boundary Callback
+`Room` uses a `DataSource.Factory` as a positional data source and the Paging Boundary Callback
 API to get notified when the Paging library consumes the available local data.  NetworkState implementation
 keeps track of network status.
 
