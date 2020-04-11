@@ -39,4 +39,16 @@ data class Area(
         var pageUrl: String = "",
         var imageUrl: String = "") {
     constructor(id: String, totalRecovered: Int, totalConfirmed: Int, totalDeaths: Int) : this()
+
+
+    override fun hashCode(): Int {
+        return id.hashCode()
+    }
+
+    override fun equals(other: Any?) = (other is Area)
+            && id == other.id
+            && totalConfirmed == other.totalConfirmed
+            && totalRecovered == other.totalRecovered
+            && totalDeaths == other.totalDeaths
+
 }

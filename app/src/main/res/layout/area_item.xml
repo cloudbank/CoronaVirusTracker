@@ -50,7 +50,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="18dp"
         android:layout_marginRight="18dp"
-        android:layout_gravity="start"
+        android:layout_gravity="start|center_vertical"
         android:textAlignment="viewStart"
         android:gravity="start|center_vertical"
         android:textColor="@android:color/white" />
@@ -60,7 +60,7 @@
         android:layout_width="50dp"
         android:layout_height="wrap_content"
         android:textAlignment="viewStart"
-        android:layout_gravity="start"
+        android:layout_gravity="start|center_vertical"
         android:gravity="start|center_vertical"
         android:layout_marginEnd="18dp"
         android:layout_marginRight="18dp"

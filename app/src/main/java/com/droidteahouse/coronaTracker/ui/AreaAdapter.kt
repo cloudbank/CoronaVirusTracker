@@ -105,7 +105,7 @@ class AreaAdapter(
                     oldItem == newItem
 
             override fun areItemsTheSame(oldItem: Area, newItem: Area): Boolean =
-                    oldItem.totalConfirmed == newItem.totalConfirmed
+                    oldItem.id == newItem.id
 
             override fun getChangePayload(oldItem: Area, newItem: Area) {
                 /* return if (sameExceptScore(oldItem, newItem)) {
