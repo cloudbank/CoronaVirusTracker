@@ -19,21 +19,26 @@
     android:layout_height="match_parent"
     android:background="@color/colorPrimary">
 
-
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/root"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="18dp"
-        android:background="@color/colorPrimary"
-        android:orientation="vertical">
+        android:background="@color/colorPrimary">
 
-
+        <ImageView
+            android:id="@+id/no_network"
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:layout_alignParentStart="true"
+            android:background="@android:color/transparent"
+            android:src="@drawable/no_network"
+            android:translationZ="100dp"
+            android:visibility="visible" />
         <TextView
             android:id="@+id/world"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
@@ -49,14 +54,14 @@
             android:id="@+id/header"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="right"
             android:layout_marginStart="8dp"
             android:layout_marginTop="0dp"
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
             android:background="@color/colorPrimaryDark"
+            android:gravity="right"
+            android:layout_below="@id/world"
             android:text="@string/header"
-
             android:textColor="@android:color/white"
             android:textSize="12dp" />
 
@@ -64,7 +69,8 @@
             android:id="@+id/swipe_refresh"
             android:layout_width="368dp"
             android:layout_height="432dp"
-            android:layout_gravity="center_horizontal"
+            android:layout_below="@id/header"
+            android:layout_centerInParent="true"
             android:background="@drawable/rounded_bg_black">
 
             <androidx.recyclerview.widget.RecyclerView
@@ -74,43 +80,32 @@
                 android:scrollbarAlwaysDrawVerticalTrack="true"
                 android:scrollbars="vertical"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
-
-        <LinearLayout
-            android:id="@+id/bottomContainer"
+        <TextView
+            android:id="@+id/totals"
+            android:layout_below="@id/swipe_refresh"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="20dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:text=""
+            android:textAlignment="center"
+            android:textAppearance="@style/TextAppearance.AppCompat.Light.SearchResult.Title"
+            android:textColor="@android:color/white"
+            android:textSize="18dp" />
 
-            android:orientation="vertical">
+        <ImageView
+            android:id="@+id/mapview"
+            android:layout_width="430dp"
+            android:layout_below="@id/totals"
+            android:layout_height="186dp"
+            android:background="@color/colorPrimary" />
 
-            <TextView
-                android:id="@+id/totals"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginBottom="8dp"
-                android:text=""
-                android:textAlignment="center"
-                android:textAppearance="@style/TextAppearance.AppCompat.Light.SearchResult.Title"
-                android:textColor="@android:color/white"
-                android:textSize="18dp" />
+    </RelativeLayout>
 
-            <ImageView
-                android:id="@+id/mapview"
-                android:layout_width="430dp"
-                android:layout_height="186dp"
-                android:background="@color/colorPrimary"
-                android:layout_gravity="center" />
-
-
-        </LinearLayout>
-
-
-    </LinearLayout>
 
 </ScrollView>

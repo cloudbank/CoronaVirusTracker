@@ -1,10 +1,18 @@
-# Corona Virus Tracker
+# Corona Virus Tracker v2
 
- <img src="https://i.imgur.com/mqdliKA.png" height="350"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
- <img src="https://i.imgur.com/gosm6Sg.png" height="350"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  <img src="https://i.imgur.com/XEMTnYu.png" height="350"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+ <img src="https://i.imgur.com/aQ9PIeT.png" height="350"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+ <img src="https://i.imgur.com/Y4SJSNg.png" height="350"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+ <img src="https://i.imgur.com/zZZnpVB.png" height="350"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
- ###   -- up to date statistics that keep up with rapidly changing covid-19 data
+###   -- up to date statistics that keep up with rapidly changing covid-19 data
+
+### Version 2 changelog:
+* fixed data scrape for change in page
+* flatten UI
+* inject BoundayCallback into repository
+* check network to prevent unnecessary wake up for radio
+* add network status icon
+
 
 Androidx, ICS(15) to Android10, latest best practices @ google
 

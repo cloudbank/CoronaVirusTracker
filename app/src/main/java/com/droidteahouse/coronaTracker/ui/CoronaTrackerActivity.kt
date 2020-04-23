@@ -20,26 +20,26 @@ package com.droidteahouse.coronaTracker.ui
 import android.content.Context
 import android.content.Intent
 import android.graphics.PorterDuff
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
+import android.net.NetworkInfo
+import android.os.Build
 import android.os.Bundle
+import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.AbstractSavedStateViewModelFactory
-import androidx.lifecycle.Observer
-import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.*
 import androidx.paging.PagedList
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.droidteahouse.GlideApp
 import com.droidteahouse.GlideRequests
-
 import com.droidteahouse.coronaTracker.R
 import com.droidteahouse.coronaTracker.ServiceLocator
 import com.droidteahouse.coronaTracker.repository.NetworkState
 import com.droidteahouse.coronaTracker.vo.Area
-
 import kotlinx.android.synthetic.main.activity_coronatracker.*
 
 
@@ -48,13 +48,10 @@ import kotlinx.android.synthetic.main.activity_coronatracker.*
  *
  */
 class CoronaTrackerActivity : AppCompatActivity() {
+    var network: MutableLiveData<Boolean> = MutableLiveData<Boolean>()
 
     companion object {
 
-        fun intentFor(context: Context): Intent {
-            val intent = Intent(context, CoronaTrackerActivity::class.java)
-            return intent
-        }
     }
 
     private val model: CoronaTrackerViewModel by viewModels {
@@ -74,11 +71,33 @@ class CoronaTrackerActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         setContentView(R.layout.activity_coronatracker)
-
-        initAdapter()
+        network.observe(this, Observer {
+            no_network.visibility = if (it == true) View.GONE else View.VISIBLE
+            no_network.invalidate()
+        })
         initSwipeToRefresh()
+        initAdapter()
+        checkNetwork()
+    }
+
+
+    //@todo this will not work with a VPN connection like reverse tethering to detect if the relay server is cut
+    private fun checkNetwork(): Boolean {
+        var result = false
+        val cm = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.LOLLIPOP) {
+            val activeNetworkInfo = cm.getActiveNetworkInfo()
+            result = activeNetworkInfo != null && activeNetworkInfo.isConnected
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            val network = cm.activeNetwork
+            val capabilities = cm
+                    .getNetworkCapabilities(network)
+            result = capabilities != null && capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) && capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)
+        }
+        network.value = result
+        if (result == false) swipe_refresh.isRefreshing = result
+        return result
     }
 
 
@@ -86,8 +105,10 @@ class CoronaTrackerActivity : AppCompatActivity() {
         val glide = GlideApp.with(this)
         loadWorldMap(glide)
         val adapter = AreaAdapter(glide) {
-            model.retry()
-            loadWorldMap(glide)
+            if (checkNetwork()) {
+                model.retry()
+                loadWorldMap(glide)
+            }
         }
         list.adapter = adapter
         list.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
@@ -121,9 +142,13 @@ class CoronaTrackerActivity : AppCompatActivity() {
 
         model.refreshState.observe(this, Observer {
             swipe_refresh.isRefreshing = it == NetworkState.LOADING
+            checkNetwork()
         })
+
         swipe_refresh.setOnRefreshListener {
-            model.refresh()
+            if (checkNetwork()) {
+                model.refresh()
+            }
         }
     }
 

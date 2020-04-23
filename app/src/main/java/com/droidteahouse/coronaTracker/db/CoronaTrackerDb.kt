@@ -38,7 +38,7 @@ import java.io.InputStream
 @TypeConverters(Converters::class)
 abstract class CoronaTrackerDb : RoomDatabase() {
     companion object {
-        fun create(context: Context, useInMemory: Boolean): CoronaTrackerDb {
+        fun create(context: Context): CoronaTrackerDb {
             val databaseBuilder = Room.databaseBuilder(context, CoronaTrackerDb::class.java, "corona_init.db")
 
             return databaseBuilder

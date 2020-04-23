@@ -41,7 +41,13 @@ class DbCoronaTrackerRepository(
         val db: CoronaTrackerDb,
         private val coronaTrackerApi: CoronaTrackerApi,
         private val ioExecutor: Executor,
+        private var boundaryCallback: CoronaTrackerBoundaryCallback,
         private val networkPageSize: Int = DEFAULT_NETWORK_PAGE_SIZE) : CoronaTrackerRepository {
+
+    init {
+        boundaryCallback.handleResponse = this::insertResultIntoDb
+    }
+
     companion object {
         private const val DEFAULT_NETWORK_PAGE_SIZE = 10
     }
@@ -113,12 +119,7 @@ class DbCoronaTrackerRepository(
     override fun areasOfCoronaTracker(pageSize: Int): Listing<Area> {
         // create a boundary callback which will observe when the user reaches to the edges of
         // the list and update the database with extra data.
-        val boundaryCallback = CoronaTrackerBoundaryCallback(
-                webservice = coronaTrackerApi,
-                handleResponse = this::insertResultIntoDb,
-                insertFromFile = this::insertResultIntoDb,
-                ioExecutor = ioExecutor,
-                networkPageSize = networkPageSize)
+
         // we are using a mutable live data to trigger refresh requests which eventually calls
         // refresh method and gets a new live data. Each refresh request by the user becomes a newly
         // dispatched data in refreshTrigger

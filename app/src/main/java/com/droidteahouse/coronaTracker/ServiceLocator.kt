@@ -22,6 +22,7 @@ import androidx.annotation.VisibleForTesting
 import com.droidteahouse.coronaTracker.api.CoronaTrackerApi
 import com.droidteahouse.coronaTracker.db.CoronaTrackerDb
 import com.droidteahouse.coronaTracker.repository.CoronaTrackerRepository
+import com.droidteahouse.coronaTracker.repository.inDb.CoronaTrackerBoundaryCallback
 import com.droidteahouse.coronaTracker.repository.inDb.DbCoronaTrackerRepository
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
@@ -38,8 +39,8 @@ interface ServiceLocator {
             synchronized(LOCK) {
                 if (instance == null) {
                     instance = DefaultServiceLocator(
-                            app = context.applicationContext as Application,
-                            useInMemoryDb = false)
+                            app = context.applicationContext as Application
+                    )
                 }
                 return instance!!
             }
@@ -67,7 +68,7 @@ interface ServiceLocator {
 /**
  * default implementation of ServiceLocator that uses production endpoints.
  */
-open class DefaultServiceLocator(val app: Application, val useInMemoryDb: Boolean) : ServiceLocator {
+open class DefaultServiceLocator(val app: Application) : ServiceLocator {
     // thread pool used for disk access
     @Suppress("PrivatePropertyName")
     private val DISK_IO = Executors.newSingleThreadExecutor()
@@ -77,18 +78,24 @@ open class DefaultServiceLocator(val app: Application, val useInMemoryDb: Boolea
     private val NETWORK_IO = Executors.newFixedThreadPool(5)
 
     private val db by lazy {
-        CoronaTrackerDb.create(app, useInMemoryDb)
+        CoronaTrackerDb.create(app)
     }
 
     private val api by lazy {
         CoronaTrackerApi.create()
     }
 
+    val boundaryCallback = CoronaTrackerBoundaryCallback(
+            webservice = getCoronaTrackerApi(),
+            ioExecutor = getDiskIOExecutor(),
+            networkPageSize = 10)
+
     override fun getRepository(): CoronaTrackerRepository {
         return DbCoronaTrackerRepository(
                 db = db,
                 coronaTrackerApi = getCoronaTrackerApi(),
-                ioExecutor = getDiskIOExecutor())
+                ioExecutor = getDiskIOExecutor(),
+                boundaryCallback = boundaryCallback)
     }
 
     override fun getNetworkExecutor(): Executor = NETWORK_IO

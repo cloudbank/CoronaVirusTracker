@@ -48,7 +48,7 @@ data class ApiResponse(
             return gson.fromJson(realData, object : TypeToken<ApiResponse>() {}.type) as ApiResponse
         }
 
-        fun fromString(s: String): ApiResponse {
+        fun fromString(s: String): ApiResponse? {
 
             val start = s.indexOf(startString)
             val data = s.subSequence(start, s.indexOf(endString, start)).toString()
@@ -89,13 +89,17 @@ data class ApiResponse(
 
             for (i in 2 until rows.size - 2) {
                 val row: Element = rows[i]
-                var imageUrl = row.select("th")[0].child(0).toString()
-                val start = imageUrl.indexOf(imageStart)
-                imageUrl = imageUrl.subSequence(start, imageUrl.indexOf(imageEnd, start)).toString()
-                val country = row.select("th")[1].text()
-                val cols: Elements = row.select("td")
-                val s = (cols.text() + " " + country.replace(" ", "_") + " " + imageUrl).replace(regex, "")
-                countries.add(s)
+                if (row.select("th")[0].getElementsByTag("img").isEmpty()) {
+                    continue
+                } else {
+                    var imageUrl = row.select("th")[0].child(0).toString()
+                    val start = imageUrl.indexOf(imageStart)
+                    imageUrl = imageUrl.subSequence(start, imageUrl.indexOf(imageEnd, start)).toString()
+                    val country = row.select("th")[1].text()
+                    val cols: Elements = row.select("td")
+                    val s = (cols.text() + " " + country.replace(" ", "_") + " " + imageUrl).replace(regex, "")
+                    countries.add(s)
+                }
             }
         }
 

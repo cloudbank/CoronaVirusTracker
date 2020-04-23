@@ -39,12 +39,10 @@ import kotlin.reflect.KFunction1
  */
 class CoronaTrackerBoundaryCallback(
         private val webservice: CoronaTrackerApi,
-        private val handleResponse: KFunction1<@ParameterName(name = "body") ApiResponse?, Unit>,
-        private val insertFromFile: KFunction1<@ParameterName(name = "body") ApiResponse?, Unit>,
         private val ioExecutor: Executor,
         private val networkPageSize: Int)
     : PagedList.BoundaryCallback<Area>() {
-
+    lateinit var handleResponse: KFunction1<@ParameterName(name = "body") ApiResponse?, Unit>
     val helper = PagingRequestHelper(ioExecutor)
     val networkState = helper.createStatusLiveData()
 
@@ -73,11 +71,7 @@ class CoronaTrackerBoundaryCallback(
     override fun onItemAtEndLoaded(itemAtEnd: Area) {
     }
 
-    private fun insertFromFile() {
-        ioExecutor.execute {
-            insertFromFile(ApiResponse.fromFile(MyApplication.instance))
-        }
-    }
+
 
     /**
      * every time it gets new items, boundary callback simply inserts them into the database and
@@ -87,7 +81,7 @@ class CoronaTrackerBoundaryCallback(
             response: Response<String>,
             it: PagingRequestHelper.Request.Callback) {
         ioExecutor.execute {
-            handleResponse(ApiResponse.fromString(response.body().toString()))
+            handleResponse?.invoke(response.body()?.let { it1 -> ApiResponse.fromString(it1) })
             it.recordSuccess()
         }
     }
