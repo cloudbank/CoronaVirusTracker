@@ -16,16 +16,13 @@
 
 package com.droidteahouse.coronaTracker.db
 
+import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import android.content.Context
-import android.graphics.Typeface.createFromAsset
 import androidx.room.TypeConverters
 import com.droidteahouse.coronaTracker.vo.ApiResponse
 import com.droidteahouse.coronaTracker.vo.Area
-import java.io.IOException
-import java.io.InputStream
 
 /**
  * Database schema used by the corona tracker

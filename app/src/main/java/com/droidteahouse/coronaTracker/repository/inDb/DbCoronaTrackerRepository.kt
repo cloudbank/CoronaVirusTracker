@@ -23,9 +23,9 @@ import androidx.lifecycle.switchMap
 import androidx.paging.toLiveData
 import com.droidteahouse.coronaTracker.api.CoronaTrackerApi
 import com.droidteahouse.coronaTracker.db.CoronaTrackerDb
+import com.droidteahouse.coronaTracker.repository.CoronaTrackerRepository
 import com.droidteahouse.coronaTracker.repository.Listing
 import com.droidteahouse.coronaTracker.repository.NetworkState
-import com.droidteahouse.coronaTracker.repository.CoronaTrackerRepository
 import com.droidteahouse.coronaTracker.vo.ApiResponse
 import com.droidteahouse.coronaTracker.vo.Area
 import retrofit2.Call
@@ -93,6 +93,7 @@ class DbCoronaTrackerRepository(
                     override fun onFailure(call: Call<String>, t: Throwable) {
                         // retrofit calls this on main thread so safe to call set value
                         networkState.value = NetworkState.error(t.message)
+
                     }
 
                     override fun onResponse(

@@ -16,7 +16,9 @@
 
 package com.droidteahouse.coronaTracker.ui
 
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Transformations
+import androidx.lifecycle.ViewModel
 import com.droidteahouse.coronaTracker.repository.CoronaTrackerRepository
 import com.droidteahouse.coronaTracker.vo.ApiResponse
 

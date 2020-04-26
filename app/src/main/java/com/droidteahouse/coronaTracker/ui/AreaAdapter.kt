@@ -16,15 +16,12 @@
 
 package com.droidteahouse.coronaTracker.ui
 
-import android.content.Context
+import android.view.ViewGroup
 import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import android.view.ViewGroup
 import com.droidteahouse.GlideRequests
-
 import com.droidteahouse.coronaTracker.R
-
 import com.droidteahouse.coronaTracker.repository.NetworkState
 import com.droidteahouse.coronaTracker.vo.Area
 

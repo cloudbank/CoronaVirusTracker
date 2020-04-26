@@ -17,11 +17,7 @@
 package com.droidteahouse.coronaTracker.vo
 
 import androidx.annotation.Nullable
-import androidx.room.ColumnInfo
-import androidx.room.Entity
-import androidx.room.Index
-import androidx.room.PrimaryKey
-import com.google.gson.annotations.SerializedName
+import androidx.room.*
 
 
 @Entity(tableName = "areas",
@@ -40,6 +36,9 @@ data class Area(
         var imageUrl: String = "") {
     constructor(id: String, totalRecovered: Int, totalConfirmed: Int, totalDeaths: Int) : this()
 
+    @Ignore
+    var percentageRecovered: Double =
+            if (totalRecovered == "—" || totalRecovered == "" || totalRecovered?.replace(",", "")!!.toInt() == 0) 0.0 else totalRecovered?.replace(",", "")!!.toDouble() / (totalConfirmed.replace(",", "").toDouble() - (totalDeaths?.replace(",", "")!!.toDouble())) * 100.00
 
     override fun hashCode(): Int {
         return id.hashCode()
@@ -50,5 +49,6 @@ data class Area(
             && totalConfirmed == other.totalConfirmed
             && totalRecovered == other.totalRecovered
             && totalDeaths == other.totalDeaths
+
 
 }

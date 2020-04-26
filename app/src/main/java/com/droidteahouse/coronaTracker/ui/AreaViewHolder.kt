@@ -16,17 +16,21 @@
 
 package com.droidteahouse.coronaTracker.ui
 
-import androidx.recyclerview.widget.RecyclerView
+
+import android.os.Build
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
+import android.view.View.OnTouchListener
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
 import com.droidteahouse.GlideRequests
 import com.droidteahouse.coronaTracker.R
-
-
 import com.droidteahouse.coronaTracker.vo.Area
+import java.text.DecimalFormat
+
 
 /**
  * A RecyclerView ViewHolder that displays an area
@@ -38,23 +42,9 @@ class AreaViewHolder(view: View, private val glide: GlideRequests
     private val total: TextView = view.findViewById(R.id.total)
     private val recovered: TextView = view.findViewById(R.id.recovered)
     private val thumbnail: ImageView = view.findViewById(R.id.thumbnail)
-
+    private val percentage: ImageView = view.findViewById(R.id.thumbnail)
+    private val df by lazy { DecimalFormat("#.##") }
     private var area: Area? = null
-
-
-    init {
-        view.setOnClickListener {
-            // @todo
-            /*  area?.let { area ->
-                  val intent = Intent(ctx, MapsActivity::class.java)
-                  intent.putExtra("latitude", area.latitude)
-                  intent.putExtra("longitude", area.longitude)
-                  intent.putStringArrayListExtra("latLongList", area.areas.map { it.latitude.toString() + " " + it.longitude + " " + it.totalConfirmed } as ArrayList<String>)
-                  intent.putExtra("totalConfirmed", area.totalConfirmed)
-                  view.context.startActivity(intent)
-              }*/
-        }
-    }
 
     fun bind(area: Area?) {
         this.area = area
@@ -68,6 +58,10 @@ class AreaViewHolder(view: View, private val glide: GlideRequests
 
         total.text = area?.totalConfirmed.toString()
         recovered.text = area?.totalRecovered.toString()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            recovered.tooltipText = df.format(area?.percentageRecovered).toString() + "%"
+        }
+
     }
 
     companion object {

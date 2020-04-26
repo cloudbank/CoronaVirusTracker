@@ -16,13 +16,12 @@
 
 package com.droidteahouse.coronaTracker.repository.inDb
 
+import androidx.annotation.MainThread
 import androidx.paging.PagedList
 import androidx.paging.PagingRequestHelper
-import androidx.annotation.MainThread
-import com.droidteahouse.coronaTracker.MyApplication
-import com.droidteahouse.coronaTracker.vo.ApiResponse
 import com.droidteahouse.coronaTracker.api.CoronaTrackerApi
 import com.droidteahouse.coronaTracker.util.createStatusLiveData
+import com.droidteahouse.coronaTracker.vo.ApiResponse
 import com.droidteahouse.coronaTracker.vo.Area
 import retrofit2.Call
 import retrofit2.Callback

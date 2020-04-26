@@ -18,11 +18,9 @@ package com.droidteahouse.coronaTracker.ui
 
 
 import android.content.Context
-import android.content.Intent
 import android.graphics.PorterDuff
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
-import android.net.NetworkInfo
 import android.os.Build
 import android.os.Bundle
 import android.view.View

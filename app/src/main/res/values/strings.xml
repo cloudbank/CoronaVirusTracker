@@ -377,6 +377,7 @@
     ]
     </string>
     <string name="daily_report">DAILY REPORT</string>
-    <string name="header">"Cases    Recovered            "</string>
+    <string name="cases">Cases</string>
+    <string name="recovered">Recovered</string>
     <string name="world_map_url">https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/COVID-19_Outbreak_World_Map_per_Capita.svg/320px-COVID-19_Outbreak_World_Map_per_Capita.svg.png</string>
 </resources>
