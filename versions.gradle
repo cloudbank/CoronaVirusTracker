@@ -54,7 +54,7 @@ versions.navigation = "2.3.0-alpha01"
 versions.okhttp_logging_interceptor = "3.9.0"
 versions.paging = "2.1.1"
 versions.recyclerview = "1.0.0"
-versions.retrofit = "2.3.0"
+versions.retrofit = "2.6.0"
 versions.robolectric = "4.2"
 versions.room = "2.2.3"
 versions.rx_android = "2.0.1"
@@ -107,6 +107,7 @@ deps.core_ktx = "androidx.core:core-ktx:$versions.core_ktx"
 
 def coroutines = [:]
 coroutines.android = "org.jetbrains.kotlinx:kotlinx-coroutines-android:$versions.coroutines"
+coroutines.core = "org.jetbrains.kotlinx:kotlinx-coroutines-core:$versions.coroutines"
 coroutines.test = "org.jetbrains.kotlinx:kotlinx-coroutines-test:$versions.coroutines"
 deps.coroutines = coroutines
 

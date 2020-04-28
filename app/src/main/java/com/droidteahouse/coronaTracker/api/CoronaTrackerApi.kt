@@ -23,9 +23,8 @@ import com.google.gson.GsonBuilder
 import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
-import retrofit2.Call
+import retrofit2.Response
 import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.converter.scalars.ScalarsConverterFactory
 import retrofit2.http.GET
 
@@ -35,7 +34,7 @@ import retrofit2.http.GET
  */
 interface CoronaTrackerApi {
     @GET("/wiki/2019%E2%80%9320_coronavirus_pandemic")
-    fun scrape(): Call<String>
+    suspend fun scrape(): Response<String>
 
 
     data class CoronaTrackerResponse(val data: Area)
@@ -58,7 +57,6 @@ interface CoronaTrackerApi {
                     .baseUrl(httpUrl)
                     .client(client)
                     .addConverterFactory(ScalarsConverterFactory.create())
-                    .addConverterFactory(GsonConverterFactory.create(gson))
                     .build()
                     .create(CoronaTrackerApi::class.java)
         }

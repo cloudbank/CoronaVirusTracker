@@ -1,10 +1,14 @@
-# Corona Virus Tracker v2
+# Corona Virus Tracker v3
 
  <img src="https://i.imgur.com/aQ9PIeT.png" height="350"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
  <img src="https://i.imgur.com/Y4SJSNg.png" height="350"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
  <img src="https://i.imgur.com/zZZnpVB.png" height="350"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
 ###   -- up to date statistics that keep up with rapidly changing covid-19 data
+
+
+### Version 3 changelog:
+* upgrade retrofit and add coroutines support
 
 ### Version 2 changelog:
 * fixed data scrape for change in page

@@ -23,8 +23,9 @@ import com.droidteahouse.coronaTracker.api.CoronaTrackerApi
 import com.droidteahouse.coronaTracker.util.createStatusLiveData
 import com.droidteahouse.coronaTracker.vo.ApiResponse
 import com.droidteahouse.coronaTracker.vo.Area
-import retrofit2.Call
-import retrofit2.Callback
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import retrofit2.Response
 import java.util.concurrent.Executor
 import kotlin.reflect.KFunction1
@@ -51,8 +52,11 @@ class CoronaTrackerBoundaryCallback(
     @MainThread
     override fun onZeroItemsLoaded() {
         helper.runIfNotRunning(PagingRequestHelper.RequestType.INITIAL) {
-            webservice.scrape()
-                    .enqueue(createWebserviceCallback(it))
+            CoroutineScope(Dispatchers.IO).launch {
+                val response = webservice.scrape()
+                if (response.isSuccessful) insertItemsIntoDb(response, it) else it.recordFailure(Throwable(response.errorBody().toString()))
+
+            }
         }
     }
 
@@ -71,7 +75,6 @@ class CoronaTrackerBoundaryCallback(
     }
 
 
-
     /**
      * every time it gets new items, boundary callback simply inserts them into the database and
      * paging library takes care of refreshing the list if necessary.
@@ -85,20 +88,5 @@ class CoronaTrackerBoundaryCallback(
         }
     }
 
-    private fun createWebserviceCallback(it: PagingRequestHelper.Request.Callback)
-            : Callback<String> {
-        return object : Callback<String> {
-            override fun onFailure(
-                    call: Call<String>,
-                    t: Throwable) {
-                it.recordFailure(t)
-            }
 
-            override fun onResponse(
-                    call: Call<String>,
-                    response: Response<String>) {
-                insertItemsIntoDb(response, it)
-            }
-        }
-    }
 }

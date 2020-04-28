@@ -19,6 +19,7 @@ package com.droidteahouse.coronaTracker.repository.inDb
 import androidx.annotation.MainThread
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.liveData
 import androidx.lifecycle.switchMap
 import androidx.paging.toLiveData
 import com.droidteahouse.coronaTracker.api.CoronaTrackerApi
@@ -28,9 +29,6 @@ import com.droidteahouse.coronaTracker.repository.Listing
 import com.droidteahouse.coronaTracker.repository.NetworkState
 import com.droidteahouse.coronaTracker.vo.ApiResponse
 import com.droidteahouse.coronaTracker.vo.Area
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import java.util.concurrent.Executor
 
 /**
@@ -86,29 +84,15 @@ class DbCoronaTrackerRepository(
      */
     @MainThread
     private fun refresh(): LiveData<NetworkState> {
-        val networkState = MutableLiveData<NetworkState>()
-        networkState.value = NetworkState.LOADING
-        coronaTrackerApi.scrape().enqueue(
-                object : Callback<String> {
-                    override fun onFailure(call: Call<String>, t: Throwable) {
-                        // retrofit calls this on main thread so safe to call set value
-                        networkState.value = NetworkState.error(t.message)
-
-                    }
-
-                    override fun onResponse(
-                            call: Call<String>,
-                            response: Response<String>) {
-                        ioExecutor.execute {
-                            db.runInTransaction {
-                                updateResult(ApiResponse.fromString(response.body().toString()))
-                            }
-                            // since we are in bg thread now, post the result.
-                            networkState.postValue(NetworkState.LOADED)
-                        }
-                    }
-                }
-        )
+        val networkState = liveData {
+            emit(NetworkState.LOADING)
+            try {
+                coronaTrackerApi.scrape()
+                emit(NetworkState.LOADED)
+            } catch (ioException: Exception) {
+                emit(NetworkState.error(ioException.toString()))
+            }
+        }
         return networkState
     }
 
