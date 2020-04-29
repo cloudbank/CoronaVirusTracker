@@ -17,14 +17,17 @@
 package com.droidteahouse.coronaTracker.repository.inDb
 
 import androidx.annotation.MainThread
+import androidx.lifecycle.MutableLiveData
 import androidx.paging.PagedList
 import androidx.paging.PagingRequestHelper
 import com.droidteahouse.coronaTracker.api.CoronaTrackerApi
+import com.droidteahouse.coronaTracker.repository.NetworkState
 import com.droidteahouse.coronaTracker.util.createStatusLiveData
 import com.droidteahouse.coronaTracker.vo.ApiResponse
 import com.droidteahouse.coronaTracker.vo.Area
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import retrofit2.Response
 import java.util.concurrent.Executor
@@ -44,7 +47,7 @@ class CoronaTrackerBoundaryCallback(
     : PagedList.BoundaryCallback<Area>() {
     lateinit var handleResponse: KFunction1<@ParameterName(name = "body") ApiResponse?, Unit>
     val helper = PagingRequestHelper(ioExecutor)
-    val networkState = helper.createStatusLiveData()
+    var networkState = helper.createStatusLiveData() as MutableLiveData
 
     /**
      * Database returned 0 items. We should query the backend for more items.
@@ -52,9 +55,17 @@ class CoronaTrackerBoundaryCallback(
     @MainThread
     override fun onZeroItemsLoaded() {
         helper.runIfNotRunning(PagingRequestHelper.RequestType.INITIAL) {
-            CoroutineScope(Dispatchers.IO).launch {
-                val response = webservice.scrape()
-                if (response.isSuccessful) insertItemsIntoDb(response, it) else it.recordFailure(Throwable(response.errorBody().toString()))
+            CoroutineScope(Dispatchers.Main).launch {
+                try {
+                    val api = async(Dispatchers.IO) { CoronaTrackerApi.safeApiCall(it, networkState) { webservice.scrape() } }
+                    val response = api.await()
+                    if (response != null) {
+                        if (response.isSuccessful) launch(Dispatchers.IO) { insertItemsIntoDb(response, it) } else it.recordFailure(Throwable(response.errorBody().toString()))
+                    }
+                } catch (e: Exception) {
+                    networkState.value = (NetworkState.error(e.message ?: "unknown err"))
+                    it.recordFailure(e)
+                }
 
             }
         }
@@ -82,9 +93,13 @@ class CoronaTrackerBoundaryCallback(
     private fun insertItemsIntoDb(
             response: Response<String>,
             it: PagingRequestHelper.Request.Callback) {
-        ioExecutor.execute {
-            handleResponse?.invoke(response.body()?.let { it1 -> ApiResponse.fromString(it1) })
-            it.recordSuccess()
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                handleResponse?.invoke(response.body()?.let { it1 -> ApiResponse.fromString(it1) })
+                it.recordSuccess()
+            } catch (e: Exception) {
+                it.recordFailure(e)
+            }
         }
     }
 

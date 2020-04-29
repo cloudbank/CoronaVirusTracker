@@ -16,10 +16,10 @@
 
 package com.droidteahouse.coronaTracker.repository.inDb
 
+import android.util.Log
 import androidx.annotation.MainThread
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.liveData
 import androidx.lifecycle.switchMap
 import androidx.paging.toLiveData
 import com.droidteahouse.coronaTracker.api.CoronaTrackerApi
@@ -29,7 +29,10 @@ import com.droidteahouse.coronaTracker.repository.Listing
 import com.droidteahouse.coronaTracker.repository.NetworkState
 import com.droidteahouse.coronaTracker.vo.ApiResponse
 import com.droidteahouse.coronaTracker.vo.Area
-import java.util.concurrent.Executor
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 
 /**
  * Repository implementation that uses a database PagedList + a boundary callback to return a
@@ -38,7 +41,6 @@ import java.util.concurrent.Executor
 class DbCoronaTrackerRepository(
         val db: CoronaTrackerDb,
         private val coronaTrackerApi: CoronaTrackerApi,
-        private val ioExecutor: Executor,
         private var boundaryCallback: CoronaTrackerBoundaryCallback,
         private val networkPageSize: Int = DEFAULT_NETWORK_PAGE_SIZE) : CoronaTrackerRepository {
 
@@ -48,18 +50,21 @@ class DbCoronaTrackerRepository(
 
     companion object {
         private const val DEFAULT_NETWORK_PAGE_SIZE = 10
+        private val TAG = DbCoronaTrackerRepository::class.java.canonicalName
     }
 
     /**
      * Inserts the response into the database while also assigning position indices to items.
      */
     private fun updateResult(body: ApiResponse?) {
+        var num = 0
         body?.let { it ->
             db.runInTransaction {
                 //this is going to be an update
                 db.dao().updateWorld(it)
-                db.dao().updateAreas(it.areas)
+                num = db.dao().updateAreas(it.areas)
             }
+            Log.d(TAG, "Update on ${num} rows successful")
         }
     }
 
@@ -84,13 +89,22 @@ class DbCoronaTrackerRepository(
      */
     @MainThread
     private fun refresh(): LiveData<NetworkState> {
-        val networkState = liveData {
-            emit(NetworkState.LOADING)
+        val networkState = MutableLiveData<NetworkState>()
+        networkState.value = NetworkState.LOADING
+        CoroutineScope(Dispatchers.Main).launch {
             try {
-                coronaTrackerApi.scrape()
-                emit(NetworkState.LOADED)
-            } catch (ioException: Exception) {
-                emit(NetworkState.error(ioException.toString()))
+                val api = async(Dispatchers.IO) { CoronaTrackerApi.safeApiCall(null, networkState) { coronaTrackerApi.scrape() } }
+                val response = api.await()
+                if (response != null) {
+                    if (response.isSuccessful) {
+                        val update = async(Dispatchers.IO) { updateResult(response.body()?.let { it1 -> ApiResponse.fromString(it1) }) }.await()
+                        networkState.value = (NetworkState.LOADED)
+                    } else {
+                        networkState.value = (NetworkState.error(response.errorBody().toString()))
+                    }
+                }
+            } catch (e: Exception) {
+                networkState.value = (NetworkState.error(e.message))
             }
         }
         return networkState

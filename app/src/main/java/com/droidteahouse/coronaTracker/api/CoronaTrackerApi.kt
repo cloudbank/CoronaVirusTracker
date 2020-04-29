@@ -17,9 +17,15 @@
 package com.droidteahouse.coronaTracker.api
 
 import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.paging.PagingRequestHelper
+import com.droidteahouse.coronaTracker.repository.NetworkState
 import com.droidteahouse.coronaTracker.vo.Area
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -59,6 +65,22 @@ interface CoronaTrackerApi {
                     .addConverterFactory(ScalarsConverterFactory.create())
                     .build()
                     .create(CoronaTrackerApi::class.java)
+        }
+
+        @JvmStatic
+        suspend inline fun <T> safeApiCall(prh: PagingRequestHelper.Request.Callback?, networkState: LiveData<NetworkState>, crossinline responseFunction: suspend () -> T): T? {
+            return try {
+                val response = withContext(Dispatchers.IO) { responseFunction.invoke() }
+                response
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    e.printStackTrace()
+                    Log.e("ApiCalls", "Call error: ${e.localizedMessage}", e.cause)
+                    (networkState as MutableLiveData).value = NetworkState.error(e.message)
+                    prh?.recordFailure(e)
+                }
+                null
+            }
         }
     }
 

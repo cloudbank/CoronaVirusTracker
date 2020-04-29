@@ -31,7 +31,7 @@ import com.droidteahouse.coronaTracker.vo.Area
 class AreaAdapter(
         private val glide: GlideRequests,
         private val retryCallback: () -> Unit)
-    : PagedListAdapter<Area, RecyclerView.ViewHolder>(POST_COMPARATOR) {
+    : PagedListAdapter<Area, RecyclerView.ViewHolder>(DIFF_COMPARATOR) {
     private var networkState: NetworkState? = null
 
 
@@ -97,7 +97,7 @@ class AreaAdapter(
 
     companion object {
         private val PAYLOAD_SCORE = Any()
-        val POST_COMPARATOR = object : DiffUtil.ItemCallback<Area>() {
+        val DIFF_COMPARATOR = object : DiffUtil.ItemCallback<Area>() {
             override fun areContentsTheSame(oldItem: Area, newItem: Area): Boolean =
                     oldItem == newItem
 
@@ -105,11 +105,7 @@ class AreaAdapter(
                     oldItem.id == newItem.id
 
             override fun getChangePayload(oldItem: Area, newItem: Area) {
-                /* return if (sameExceptScore(oldItem, newItem)) {
-                     PAYLOAD_SCORE
-                 } else {
-                     null
-                 }*/
+
             }
         }
 

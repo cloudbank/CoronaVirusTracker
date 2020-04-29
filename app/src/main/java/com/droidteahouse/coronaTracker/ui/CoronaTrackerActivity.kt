@@ -29,6 +29,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.*
 import androidx.paging.PagedList
+import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -109,7 +110,17 @@ class CoronaTrackerActivity : AppCompatActivity() {
             }
         }
         list.adapter = adapter
+        val horizontalDecoration = DividerItemDecoration(this,
+                DividerItemDecoration.VERTICAL)
+        val horizontalDivider = ContextCompat.getDrawable(this, R.drawable.list_divider)
+        horizontalDecoration.setDrawable(horizontalDivider!!)
+        list.addItemDecoration(horizontalDecoration)
+
         list.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
+        list.setHasFixedSize(true);
+        list.setItemAnimator(DefaultItemAnimator())
+
+
 
         model.areas.observe(this, Observer<PagedList<Area>> {
             adapter.submitList(it) {
@@ -133,11 +144,15 @@ class CoronaTrackerActivity : AppCompatActivity() {
 
     private fun loadWorldMap(glide: GlideRequests) {
         glide.load(getString(R.string.world_map_url)).into(mapview)
-        mapview.setColorFilter(ContextCompat.getColor(this, R.color.colorPrimaryDark), PorterDuff.Mode.MULTIPLY);
+        mapview.setColorFilter(ContextCompat.getColor(this, R.color.colorPrimary), PorterDuff.Mode.MULTIPLY);
     }
 
     private fun initSwipeToRefresh() {
-
+        swipe_refresh.setColorSchemeResources(
+                R.color.colorPrimary,
+                android.R.color.holo_green_dark,
+                android.R.color.holo_orange_dark,
+                android.R.color.holo_blue_dark)
         model.refreshState.observe(this, Observer {
             swipe_refresh.isRefreshing = it == NetworkState.LOADING
             checkNetwork()

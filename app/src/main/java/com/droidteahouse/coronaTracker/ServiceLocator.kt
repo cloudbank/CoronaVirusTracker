@@ -94,7 +94,6 @@ open class DefaultServiceLocator(val app: Application) : ServiceLocator {
         return DbCoronaTrackerRepository(
                 db = db,
                 coronaTrackerApi = getCoronaTrackerApi(),
-                ioExecutor = getDiskIOExecutor(),
                 boundaryCallback = boundaryCallback)
     }
 

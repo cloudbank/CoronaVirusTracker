@@ -18,14 +18,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorPrimary">
+    android:background="@color/white">
 
     <RelativeLayout
         android:id="@+id/root"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="18dp"
-        android:background="@color/colorPrimary">
+        android:background="@color/white">
 
         <ImageView
             android:id="@+id/no_network"
@@ -46,12 +46,12 @@
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="0dp"
-            android:background="@color/colorPrimaryDark"
+            android:background="@color/primary_light"
             android:gravity="center_horizontal"
             android:text="@string/daily_report"
             android:textAlignment="center"
             android:textAppearance="@style/TextAppearance.AppCompat.Light.SearchResult.Title"
-            android:textColor="@android:color/white"
+            android:textColor="@color/colorPrimaryDark"
             android:textSize="18dp" />
 
 
@@ -66,9 +66,7 @@
             android:layout_marginEnd="40dp"
             android:layout_marginRight="40dp"
             android:layout_marginBottom="8dp"
-            android:background="@color/colorPrimary"
             android:text="@string/cases"
-            android:textColor="@color/colorPrimaryDark"
             android:textSize="12dp"
             tools:text="Cases" />
 
@@ -82,9 +80,7 @@
             android:layout_marginRight="8dp"
             android:layout_marginBottom="8dp"
             android:layout_toRightOf="@id/cases"
-            android:background="@color/colorPrimary"
             android:text="@string/recovered"
-            android:textColor="@color/colorPrimaryDark"
             android:textSize="12dp" />
 
 
@@ -115,10 +111,11 @@
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
+            android:gravity="center_horizontal"
             android:text=""
             android:textAlignment="center"
             android:textAppearance="@style/TextAppearance.AppCompat.Light.SearchResult.Title"
-            android:textColor="@android:color/white"
+            android:textColor="@color/colorPrimaryDark"
             android:textSize="18dp" />
 
         <ImageView
@@ -126,7 +123,7 @@
             android:layout_width="430dp"
             android:layout_height="186dp"
             android:layout_below="@id/totals"
-            android:background="@color/colorPrimary" />
+            android:background="@color/white" />
 
     </RelativeLayout>
 

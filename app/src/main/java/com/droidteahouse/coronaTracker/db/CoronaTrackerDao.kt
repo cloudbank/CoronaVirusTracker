@@ -35,7 +35,7 @@ interface CoronaTrackerDao {
     fun updateWorld(apiResponse: ApiResponse)
 
     @Update
-    fun updateAreas(areas: List<Area>)
+    fun updateAreas(areas: List<Area>): Int
 
     @Query("SELECT * FROM coronatracker")
     fun world(): LiveData<ApiResponse>
