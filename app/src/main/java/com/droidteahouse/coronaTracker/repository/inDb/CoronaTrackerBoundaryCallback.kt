@@ -45,6 +45,7 @@ class CoronaTrackerBoundaryCallback(
         private val ioExecutor: Executor,
         private val networkPageSize: Int)
     : PagedList.BoundaryCallback<Area>() {
+    lateinit var scope: CoroutineScope
     lateinit var handleResponse: KFunction1<@ParameterName(name = "body") ApiResponse?, Unit>
     val helper = PagingRequestHelper(ioExecutor)
     var networkState = helper.createStatusLiveData() as MutableLiveData
@@ -55,7 +56,7 @@ class CoronaTrackerBoundaryCallback(
     @MainThread
     override fun onZeroItemsLoaded() {
         helper.runIfNotRunning(PagingRequestHelper.RequestType.INITIAL) {
-            CoroutineScope(Dispatchers.Main).launch {
+            scope.launch {
                 try {
                     val api = async(Dispatchers.IO) { CoronaTrackerApi.safeApiCall(it, networkState) { webservice.scrape() } }
                     val response = api.await()

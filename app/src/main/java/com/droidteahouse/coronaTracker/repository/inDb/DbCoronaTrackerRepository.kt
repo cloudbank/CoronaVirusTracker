@@ -41,29 +41,26 @@ import kotlinx.coroutines.launch
 class DbCoronaTrackerRepository(
         val db: CoronaTrackerDb,
         private val coronaTrackerApi: CoronaTrackerApi,
-        private var boundaryCallback: CoronaTrackerBoundaryCallback,
-        private val networkPageSize: Int = DEFAULT_NETWORK_PAGE_SIZE) : CoronaTrackerRepository {
+        private var boundaryCallback: CoronaTrackerBoundaryCallback
+) : CoronaTrackerRepository {
 
     init {
         boundaryCallback.handleResponse = this::insertResultIntoDb
     }
 
     companion object {
-        private const val DEFAULT_NETWORK_PAGE_SIZE = 10
+
         private val TAG = DbCoronaTrackerRepository::class.java.canonicalName
     }
 
     /**
      * Inserts the response into the database while also assigning position indices to items.
      */
-    private fun updateResult(body: ApiResponse?) {
+    private suspend fun updateResult(body: ApiResponse?) {
         var num = 0
         body?.let { it ->
-            db.runInTransaction {
-                //this is going to be an update
-                db.dao().updateWorld(it)
-                num = db.dao().updateAreas(it.areas)
-            }
+            //@Transaction
+            num = db.dao().updateAll(it)
             Log.d(TAG, "Update on ${num} rows successful")
         }
     }
@@ -88,10 +85,10 @@ class DbCoronaTrackerRepository(
      * updated after the database transaction is finished.
      */
     @MainThread
-    private fun refresh(): LiveData<NetworkState> {
+    private fun refresh(mainScope: CoroutineScope): LiveData<NetworkState> {
         val networkState = MutableLiveData<NetworkState>()
         networkState.value = NetworkState.LOADING
-        CoroutineScope(Dispatchers.Main).launch {
+        mainScope.launch {
             try {
                 val api = async(Dispatchers.IO) { CoronaTrackerApi.safeApiCall(null, networkState) { coronaTrackerApi.scrape() } }
                 val response = api.await()
@@ -115,22 +112,24 @@ class DbCoronaTrackerRepository(
      *
      */
     @MainThread
-    override fun areasOfCoronaTracker(pageSize: Int): Listing<Area> {
+    override fun areasOfCoronaTracker(pageSize: Int, ioScope: CoroutineScope, mainScope: CoroutineScope): Listing<Area> {
         // create a boundary callback which will observe when the user reaches to the edges of
         // the list and update the database with extra data.
-
         // we are using a mutable live data to trigger refresh requests which eventually calls
         // refresh method and gets a new live data. Each refresh request by the user becomes a newly
         // dispatched data in refreshTrigger
         val refreshTrigger = MutableLiveData<Unit>()
         val refreshState = refreshTrigger.switchMap {
-            refresh()
+            refresh(mainScope)
         }
 
         // We use toLiveData Kotlin extension function here, you could also use LivePagedListBuilder
-        val livePagedList = db.dao().areas().toLiveData(
-                pageSize = pageSize,
-                boundaryCallback = boundaryCallback)
+        val livePagedList =
+                db.dao().areas().toLiveData(
+                        pageSize = pageSize,
+                        boundaryCallback = boundaryCallback)
+
+        boundaryCallback.scope = mainScope
 
         return Listing(
                 pagedList = livePagedList,

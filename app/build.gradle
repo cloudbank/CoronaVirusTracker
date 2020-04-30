@@ -69,6 +69,7 @@ dependencies {
     implementation deps.cardview
     implementation deps.material
     implementation deps.room.runtime
+    implementation deps.room.ktx
     implementation deps.lifecycle.livedata_ktx
     implementation deps.lifecycle.runtime
     implementation deps.paging_ktx
@@ -82,6 +83,7 @@ dependencies {
     implementation deps.coroutines.core
     implementation deps.coroutines.android
     implementation deps.coroutines.test
+
 
 
     // Android Testing Support Library's runner and rules

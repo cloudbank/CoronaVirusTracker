@@ -21,19 +21,27 @@ import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 import com.droidteahouse.coronaTracker.repository.CoronaTrackerRepository
 import com.droidteahouse.coronaTracker.vo.ApiResponse
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 
 
 class CoronaTrackerViewModel(
         private val repository: CoronaTrackerRepository
 
 ) : ViewModel() {
+
+    val vieModelJob = SupervisorJob()
+    private val uiScope = CoroutineScope(Dispatchers.Main + vieModelJob)
+    private val ioScope = CoroutineScope(Dispatchers.IO + vieModelJob)
+
     val worldLiveData: LiveData<ApiResponse> =
             repository.worldData()
 
     var worldData: LiveData<String> = Transformations.map(worldLiveData) { data ->
         if (data?.totalConfirmed == null) " " else "${data?.totalConfirmed} total  ${data?.totalRecovered} recovered"
     }
-    private val repoResult = repository.areasOfCoronaTracker(30)
+    private val repoResult = repository.areasOfCoronaTracker(30, ioScope, uiScope)
 
 
     val areas = repoResult.pagedList
@@ -48,5 +56,11 @@ class CoronaTrackerViewModel(
     fun retry() {
         val listing = repoResult
         listing?.retry?.invoke()
+    }
+
+    override fun onCleared() {
+        vieModelJob.cancel()
+        super.onCleared()
+
     }
 }

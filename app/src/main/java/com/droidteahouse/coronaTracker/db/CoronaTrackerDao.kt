@@ -31,11 +31,16 @@ interface CoronaTrackerDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertWorld(apiResponse: ApiResponse)
 
-    @Update
-    fun updateWorld(apiResponse: ApiResponse)
+    @Transaction
+    suspend fun updateAll(apiResponse: ApiResponse): Int {
+        updateWorld(apiResponse)
+        return updateAreas(apiResponse.areas)
+    }
 
     @Update
-    fun updateAreas(areas: List<Area>): Int
+    suspend fun updateWorld(apiResonse: ApiResponse): Int
+    @Update
+    suspend fun updateAreas(areas: List<Area>): Int
 
     @Query("SELECT * FROM coronatracker")
     fun world(): LiveData<ApiResponse>

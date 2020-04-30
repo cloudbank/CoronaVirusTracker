@@ -19,9 +19,10 @@ package com.droidteahouse.coronaTracker.repository
 import androidx.lifecycle.LiveData
 import com.droidteahouse.coronaTracker.vo.ApiResponse
 import com.droidteahouse.coronaTracker.vo.Area
+import kotlinx.coroutines.CoroutineScope
 
 
 interface CoronaTrackerRepository {
-    fun areasOfCoronaTracker(pageSize: Int): Listing<Area>
+    fun areasOfCoronaTracker(pageSize: Int, ioScope: CoroutineScope, mainScope: CoroutineScope): Listing<Area>
     fun worldData(): LiveData<ApiResponse>
 }

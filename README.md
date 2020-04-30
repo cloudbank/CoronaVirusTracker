@@ -8,8 +8,10 @@
 
 
 ### Version 3 changelog:
-* upgrade retrofit and add coroutines support
+* upgrade retrofit and add Kotlin coroutines support
 * change UI and palette
+* add coroutine support for Room
+* scope coroutines to ViewModel lifecycle with a Job
 
 ### Version 2 changelog:
 * fixed data scrape for change in page
