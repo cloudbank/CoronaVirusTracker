@@ -18,7 +18,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="55dp"
+    android:layout_height="65dp"
     android:background="@color/white"
     android:orientation="horizontal">
 
@@ -40,6 +40,7 @@
         android:layout_gravity="center_vertical|right"
         android:layout_marginEnd="10dp"
         android:layout_marginRight="10dp"
+        android:textSize="12sp"
         android:gravity="center_vertical"
         android:textStyle="bold" />
 
@@ -50,12 +51,14 @@
         android:layout_gravity="center_vertical|right"
         android:layout_marginEnd="10dp"
         android:layout_marginRight="10dp"
+        android:textSize="12sp"
         tools:text="2,333,333" />
 
     <TextView
         android:id="@+id/recovered"
         android:layout_width="65dp"
         android:layout_height="wrap_content"
+        android:textSize="12sp"
         android:layout_gravity="center_vertical" />
 
 

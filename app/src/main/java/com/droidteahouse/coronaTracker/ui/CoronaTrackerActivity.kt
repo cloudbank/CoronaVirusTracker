@@ -35,11 +35,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.droidteahouse.GlideApp
 import com.droidteahouse.GlideRequests
+import com.droidteahouse.backdrop.BackDropIconClickListener
 import com.droidteahouse.coronaTracker.R
 import com.droidteahouse.coronaTracker.ServiceLocator
 import com.droidteahouse.coronaTracker.repository.NetworkState
 import com.droidteahouse.coronaTracker.vo.Area
 import kotlinx.android.synthetic.main.activity_coronatracker.*
+import kotlinx.android.synthetic.main.main_layout.*
 
 
 /**
@@ -70,14 +72,28 @@ class CoronaTrackerActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_coronatracker)
+        setContentView(R.layout.main_layout)
         network.observe(this, Observer {
             no_network.visibility = if (it == true) View.GONE else View.VISIBLE
             no_network.invalidate()
         })
+        initMenu()
         initSwipeToRefresh()
         initAdapter()
         checkNetwork()
+    }
+
+    private fun initMenu() {
+        setSupportActionBar(app_bar)
+        app_bar.setNavigationOnClickListener(BackDropIconClickListener(
+                this,
+                product_grid,
+                ContextCompat.getDrawable(this, R.drawable.shr_branded_menu), // Menu open icon
+                ContextCompat.getDrawable(this, R.drawable.shr_close_menu))) // Menu close icon
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            product_grid.background = getDrawable(R.drawable.shr_product_grid_background_shape)
+        }
+
     }
 
 
@@ -143,8 +159,10 @@ class CoronaTrackerActivity : AppCompatActivity() {
     }
 
     private fun loadWorldMap(glide: GlideRequests) {
-        glide.load(getString(R.string.world_map_url)).into(mapview)
-        mapview.setColorFilter(ContextCompat.getColor(this, R.color.colorPrimary), PorterDuff.Mode.MULTIPLY);
+        if (!getResources().getBoolean(R.bool.is_landscape)) {
+            glide.load(getString(R.string.world_map_url)).into(mapview)
+            mapview.setColorFilter(ContextCompat.getColor(this, R.color.colorPrimary), PorterDuff.Mode.MULTIPLY);
+        }
     }
 
     private fun initSwipeToRefresh() {

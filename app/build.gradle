@@ -61,7 +61,7 @@ dependencies {
 
     kapt deps.room.compiler
     kapt deps.glide.compiler
-
+    implementation project(":backdrop")
     implementation deps.constraint_layout
     implementation deps.app_compat
     implementation deps.fragment.runtime_ktx
