@@ -19,9 +19,7 @@ package com.droidteahouse.coronaTracker.ui
 
 import android.os.Build
 import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.View
-import android.view.View.OnTouchListener
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
@@ -76,7 +74,7 @@ class AreaViewHolder(view: View, private val glide: GlideRequests
         area?.totalConfirmed = item?.totalConfirmed!!
         area?.totalRecovered = item?.totalRecovered
         area?.totalDeaths = item.totalDeaths
-        total.text = "${item?.totalDeaths ?: 0}"
+        total.text = "${item?.totalConfirmed ?: 0}"
 
     }
 }
