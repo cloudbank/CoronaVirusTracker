@@ -9,6 +9,11 @@
 
 ###   -- up to date statistics that keep up with rapidly changing covid-19 data
 
+### Version 3.2 changelog:
+* Add Navigation Component for backdrop implementation
+* Placeholder for News Fragment (TBD)
+* Upgrade Glide and Material, use Material theme
+* API call change from page relocation
 
 ### Version 3 changelog:
 * upgrade retrofit and add Kotlin coroutines support
@@ -17,6 +22,7 @@
 * scope coroutines to ViewModel lifecycle with a Job
 * add Material backdrop w menu
 * basic handle landscape xml
+
 
 ### Version 2 changelog:
 * fixed data scrape for change in page

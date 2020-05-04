@@ -30,8 +30,8 @@ android {
         minSdkVersion build_versions.min_sdk
         targetSdkVersion build_versions.target_sdk
         multiDexEnabled true
-        versionCode 3.1
-        versionName "3.1"
+        versionCode 5
+        versionName "3.2"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -101,4 +101,7 @@ dependencies {
     testImplementation deps.retrofit.mock
     testImplementation deps.arch_core.testing
     testImplementation deps.mockito.core
+    implementation 'androidx.navigation:navigation-fragment-ktx:2.0.0'
+    implementation 'androidx.navigation:navigation-ui-ktx:2.0.0'
+    implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
 }

@@ -31,9 +31,9 @@ class CoronaTrackerViewModel(
 
 ) : ViewModel() {
 
-    val vieModelJob = SupervisorJob()
-    private val uiScope = CoroutineScope(Dispatchers.Main + vieModelJob)
-    private val ioScope = CoroutineScope(Dispatchers.IO + vieModelJob)
+    val viewModelJob = SupervisorJob()
+    private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
+    private val ioScope = CoroutineScope(Dispatchers.IO + viewModelJob)
 
     val worldLiveData: LiveData<ApiResponse> =
             repository.worldData()
@@ -41,10 +41,15 @@ class CoronaTrackerViewModel(
     var worldData: LiveData<String> = Transformations.map(worldLiveData) { data ->
         if (data?.totalConfirmed == null) " " else "${data?.totalConfirmed} total  ${data?.totalRecovered} recovered"
     }
+
+
     private val repoResult = repository.areasOfCoronaTracker(30, ioScope, uiScope)
 
-
-    val areas = repoResult.pagedList
+    //livedata vs databinding
+    //a livedata that observes the value of the button in the menu
+    //mapping that to a repo call
+    //this vm
+    val resultList = repoResult.pagedList
     val networkState = repoResult.networkState
     val refreshState = repoResult.refreshState
 
@@ -52,14 +57,13 @@ class CoronaTrackerViewModel(
         repoResult.refresh?.invoke()
     }
 
-
     fun retry() {
         val listing = repoResult
         listing?.retry?.invoke()
     }
 
     override fun onCleared() {
-        vieModelJob.cancel()
+        viewModelJob.cancel()
         super.onCleared()
 
     }

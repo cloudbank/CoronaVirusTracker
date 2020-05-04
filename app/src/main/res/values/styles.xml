@@ -27,7 +27,7 @@
     </style>
 
 
-    <style name="AppDialogTheme" parent="Theme.AppCompat.Light.Dialog">
+    <style name="AppDialogTheme" parent="Theme.MaterialComponents.Light.Dialog">
         <!-- Customize your theme here. -->
         <item name="windowActionBar">false</item>
         <item name="android:windowNoTitle">true</item>
@@ -50,7 +50,7 @@
         <item name="android:textColor">?android:attr/textColorPrimary</item>
     </style>
 
-    <style name="Widget.Corona.Toolbar" parent="Widget.AppCompat.Toolbar">
+    <style name="Widget.Corona.Toolbar" parent="Widget.MaterialComponents.Toolbar">
         <item name="android:background">@color/colorPrimaryDark</item>
         <item name="android:theme">@style/Theme.Corona</item>
         <item name="popupTheme">@style/ThemeOverlay.AppCompat.Light</item>

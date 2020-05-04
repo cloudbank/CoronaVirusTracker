@@ -22,6 +22,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.paging.PagingRequestHelper
 import com.droidteahouse.coronaTracker.repository.NetworkState
 import com.droidteahouse.coronaTracker.vo.Area
+import com.droidteahouse.coronaTracker.vo.NewsResponse
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import kotlinx.coroutines.Dispatchers
@@ -39,8 +40,11 @@ import retrofit2.http.GET
  * API communication setup
  */
 interface CoronaTrackerApi {
-    @GET("/wiki/2019%E2%80%9320_coronavirus_pandemic")
+    @GET("/wiki/COVID-19_pandemic")
     suspend fun scrape(): Response<String>
+
+    @GET("")
+    suspend fun news(): Response<NewsResponse>
 
 
     data class CoronaTrackerResponse(val data: Area)
