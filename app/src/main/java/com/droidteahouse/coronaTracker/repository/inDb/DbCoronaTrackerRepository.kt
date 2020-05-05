@@ -94,7 +94,7 @@ class DbCoronaTrackerRepository(
                 val response = api.await()
                 if (response != null) {
                     if (response.isSuccessful) {
-                        val update = async(Dispatchers.IO) { updateResult(response.body()?.let { it1 -> ApiResponse.fromString(it1) }) }.await()
+                        launch(Dispatchers.IO) { updateResult(response.body()?.let { it1 -> ApiResponse.fromString(it1) }) }
                         networkState.value = (NetworkState.LOADED)
                     } else {
                         networkState.value = (NetworkState.error(response.errorBody().toString()))
