@@ -27,11 +27,10 @@ import com.droidteahouse.coronaTracker.vo.ApiResponse
 import com.droidteahouse.coronaTracker.vo.Area
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import retrofit2.Response
 import java.util.concurrent.Executor
-import kotlin.reflect.KFunction1
+import kotlin.reflect.KSuspendFunction1
 
 /**
  * This boundary callback gets notified when user reaches to the edges of the list such that the
@@ -46,7 +45,7 @@ class CoronaTrackerBoundaryCallback(
         private val networkPageSize: Int)
     : PagedList.BoundaryCallback<Area>() {
     lateinit var scope: CoroutineScope
-    lateinit var handleResponse: KFunction1<@ParameterName(name = "body") ApiResponse?, Unit>
+    lateinit var handleResponse: KSuspendFunction1<@ParameterName(name = "body") ApiResponse?, Unit>
     val helper = PagingRequestHelper(ioExecutor)
     var networkState = helper.createStatusLiveData() as MutableLiveData
 
@@ -58,8 +57,8 @@ class CoronaTrackerBoundaryCallback(
         helper.runIfNotRunning(PagingRequestHelper.RequestType.INITIAL) {
             scope.launch {
                 try {
-                    val api = async(Dispatchers.IO) { CoronaTrackerApi.safeApiCall(it, networkState) { webservice.scrape() } }
-                    val response = api.await()
+                    val response = CoronaTrackerApi.safeApiCall(it, networkState) { webservice.scrape() }
+
                     if (response != null) {
                         if (response.isSuccessful) launch(Dispatchers.IO) { insertItemsIntoDb(response, it) } else it.recordFailure(Throwable(response.errorBody().toString()))
                     }
@@ -91,18 +90,17 @@ class CoronaTrackerBoundaryCallback(
      * every time it gets new items, boundary callback simply inserts them into the database and
      * paging library takes care of refreshing the list if necessary.
      */
-    private fun insertItemsIntoDb(
+    private suspend fun insertItemsIntoDb(
             response: Response<String>,
             it: PagingRequestHelper.Request.Callback) {
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
+
+        try {
                 handleResponse?.invoke(response.body()?.let { it1 -> ApiResponse.fromString(it1) })
                 it.recordSuccess()
             } catch (e: Exception) {
                 it.recordFailure(e)
             }
         }
-    }
 
 
 }

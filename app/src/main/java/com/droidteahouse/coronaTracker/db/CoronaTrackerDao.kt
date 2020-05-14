@@ -26,10 +26,10 @@ import com.droidteahouse.coronaTracker.vo.Area
 @Dao
 interface CoronaTrackerDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(areas: List<Area>)
+    suspend fun insert(areas: List<Area>)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertWorld(apiResponse: ApiResponse)
+    suspend fun insertWorld(apiResponse: ApiResponse)
 
     @Transaction
     suspend fun updateAll(apiResponse: ApiResponse): Int {

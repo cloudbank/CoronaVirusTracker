@@ -16,14 +16,14 @@
 
 package com.droidteahouse.coronaTracker.ui
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.Transformations
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.*
 import com.droidteahouse.coronaTracker.repository.CoronaTrackerRepository
+import com.droidteahouse.coronaTracker.repository.Listing
 import com.droidteahouse.coronaTracker.vo.ApiResponse
+import com.droidteahouse.coronaTracker.vo.Area
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 
 
 class CoronaTrackerViewModel(
@@ -31,40 +31,41 @@ class CoronaTrackerViewModel(
 
 ) : ViewModel() {
 
-    val viewModelJob = SupervisorJob()
-    private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
-    private val ioScope = CoroutineScope(Dispatchers.IO + viewModelJob)
+
+    private val uiScope = CoroutineScope(Dispatchers.Main + viewModelScope.coroutineContext)
+
 
     val worldLiveData: LiveData<ApiResponse> =
-            repository.worldData()
+            liveData<ApiResponse>(context = viewModelScope.coroutineContext + Dispatchers.IO) { repository.worldData() }
 
     var worldData: LiveData<String> = Transformations.map(worldLiveData) { data ->
         if (data?.totalConfirmed == null) " " else "${data?.totalConfirmed} total  ${data?.totalRecovered} recovered"
     }
 
 
-    private val repoResult = repository.areasOfCoronaTracker(30, ioScope, uiScope)
+    private val repoResult = liveData<Listing<Area>>(context = viewModelScope.coroutineContext + Dispatchers.IO) {
+        emit(repository.areasOfCoronaTracker(30, uiScope))
+    }
 
     //livedata vs databinding
     //a livedata that observes the value of the button in the menu
     //mapping that to a repo call
     //this vm
-    val resultList = repoResult.pagedList
-    val networkState = repoResult.networkState
-    val refreshState = repoResult.refreshState
+
+    val resultList = repoResult.switchMap { it.pagedList }
+    val networkState = repoResult.switchMap { it.networkState }
+    val refreshState = repoResult.switchMap { it.refreshState }
+
 
     fun refresh() {
-        repoResult.refresh?.invoke()
+        viewModelScope.launch {
+            repoResult.value?.refresh?.invoke()
+        }
     }
 
     fun retry() {
-        val listing = repoResult
-        listing?.retry?.invoke()
+        repoResult.value?.retry?.invoke()
     }
 
-    override fun onCleared() {
-        viewModelJob.cancel()
-        super.onCleared()
 
-    }
 }

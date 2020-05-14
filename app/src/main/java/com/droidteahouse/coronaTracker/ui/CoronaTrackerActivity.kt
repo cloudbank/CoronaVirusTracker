@@ -74,6 +74,7 @@ class CoronaTrackerActivity : AppCompatActivity() {
             product_grid.background = getDrawable(R.drawable.shr_product_grid_background_shape)
         }
         //product_grid.onTouchEvent()
+        //add arrow to product grid
     }
 
     fun updateData(v: View) {

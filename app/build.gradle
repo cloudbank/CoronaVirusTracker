@@ -74,6 +74,7 @@ dependencies {
     implementation deps.lifecycle.runtime
     implementation deps.paging_ktx
     implementation deps.kotlin.stdlib
+    implementation deps.kotlin.reflect
     implementation deps.retrofit.runtime
     implementation deps.retrofit.gson
     implementation deps.retrofit.scalars

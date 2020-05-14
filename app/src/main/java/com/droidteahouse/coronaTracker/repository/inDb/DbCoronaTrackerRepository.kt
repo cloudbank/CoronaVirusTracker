@@ -22,6 +22,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.switchMap
 import androidx.paging.toLiveData
+import androidx.room.withTransaction
 import com.droidteahouse.coronaTracker.api.CoronaTrackerApi
 import com.droidteahouse.coronaTracker.db.CoronaTrackerDb
 import com.droidteahouse.coronaTracker.repository.CoronaTrackerRepository
@@ -31,8 +32,8 @@ import com.droidteahouse.coronaTracker.vo.ApiResponse
 import com.droidteahouse.coronaTracker.vo.Area
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /**
  * Repository implementation that uses a database PagedList + a boundary callback to return a
@@ -68,9 +69,9 @@ class DbCoronaTrackerRepository(
     /**
      * Inserts the response into the database while also assigning position indices to items.
      */
-    private fun insertResultIntoDb(body: ApiResponse?) {
+    private suspend fun insertResultIntoDb(body: ApiResponse?) {
         body?.let { it ->
-            db.runInTransaction {
+            db.withTransaction {
                 db.dao().insertWorld(it)
                 db.dao().insert(it.areas)
             }
@@ -90,11 +91,11 @@ class DbCoronaTrackerRepository(
         networkState.value = NetworkState.LOADING
         mainScope.launch {
             try {
-                val api = async(Dispatchers.IO) { CoronaTrackerApi.safeApiCall(null, networkState) { coronaTrackerApi.scrape() } }
-                val response = api.await()
+                val response = CoronaTrackerApi.safeApiCall(null, networkState) { coronaTrackerApi.scrape() }
+
                 if (response != null) {
                     if (response.isSuccessful) {
-                        launch(Dispatchers.IO) { updateResult(response.body()?.let { it1 -> ApiResponse.fromString(it1) }) }
+                        withContext(Dispatchers.IO) { updateResult(response.body()?.let { it1 -> ApiResponse.fromString(it1) }) }
                         networkState.value = (NetworkState.LOADED)
                     } else {
                         networkState.value = (NetworkState.error(response.errorBody().toString()))
@@ -112,7 +113,7 @@ class DbCoronaTrackerRepository(
      *
      */
     @MainThread
-    override fun areasOfCoronaTracker(pageSize: Int, ioScope: CoroutineScope, mainScope: CoroutineScope): Listing<Area> {
+    override suspend fun areasOfCoronaTracker(pageSize: Int, mainScope: CoroutineScope): Listing<Area> {
         // create a boundary callback which will observe when the user reaches to the edges of
         // the list and update the database with extra data.
         // we are using a mutable live data to trigger refresh requests which eventually calls

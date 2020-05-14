@@ -23,6 +23,6 @@ import kotlinx.coroutines.CoroutineScope
 
 
 interface CoronaTrackerRepository {
-    fun areasOfCoronaTracker(pageSize: Int, ioScope: CoroutineScope, mainScope: CoroutineScope): Listing<Area>
+    suspend fun areasOfCoronaTracker(pageSize: Int, mainScope: CoroutineScope): Listing<Area>
     fun worldData(): LiveData<ApiResponse>
 }

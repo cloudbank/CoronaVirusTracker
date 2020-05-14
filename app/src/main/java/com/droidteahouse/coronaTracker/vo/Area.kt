@@ -38,7 +38,7 @@ data class Area(
 
     @Ignore
     var percentageRecovered: Double =
-            if (totalRecovered == "—" || totalRecovered == "" || totalRecovered?.replace(",", "")!!.toInt() == 0) 0.0 else totalRecovered?.replace(",", "")!!.toDouble() / (totalConfirmed.replace(",", "").toDouble() - (totalDeaths?.replace(",", "")!!.toDouble())) * 100.00
+            if (totalRecovered.isNullOrBlank() || totalRecovered is String || totalRecovered == "" || totalRecovered?.replace(",", "")!!.toInt() == 0) 0.0 else totalRecovered?.replace(",", "")!!.toDouble() / (totalConfirmed.replace(",", "").toDouble() - (totalDeaths?.replace(",", "")!!.toDouble())) * 100.00
 
     override fun hashCode(): Int {
         return id.hashCode()
